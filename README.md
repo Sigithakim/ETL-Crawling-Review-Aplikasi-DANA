@@ -8,7 +8,7 @@ Proses dijalankan melalui tiga tahapan utama:
 | --------- | ---------------------------------------------------------------------------------------------------------- | -------------------- |
 | Extract   | Mengambil 10.000 review dengan sistem pagination untuk memenuhi target data                                | google-play-scraper  |
 | Transform | Menyesuaikan schema data, membersihkan null values, dan mengonversi format waktu (Unix → Formatted String) | Python               |
-| Load      | Menyimpan data terstruktur ke database                                                                     | psycopg2, PostgreSQL |
+| Load      | Proses insert menggunakan execute_batch dari psycopg2.extras untuk meningkatkan performa pada data skala besar.                                                                     | psycopg2, PostgreSQL, psycopg2.extras |
 
 Struktur Tabel dana_reviews
 Data disimpan dalam tabel dana_reviews dengan skema berikut:

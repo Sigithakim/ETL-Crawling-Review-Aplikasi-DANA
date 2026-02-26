@@ -1,4 +1,5 @@
 from google_play_scraper import reviews, Sort
+from psycopg2.extras import execute_batch
 import pandas as pd
 import psycopg2
 import time
@@ -66,23 +67,23 @@ def load_to_postgres(df):
         user="postgres",
         password="0000"
     )
-    
+
     cur = conn.cursor()
 
-    for _, row in df.iterrows():
-        cur.execute(
-            """
-            INSERT INTO dana_reviews VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """,
-            tuple(row)
-        )
+    insert_query = """
+        INSERT INTO dana_reviews VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    """
+
+    data_tuples = [tuple(row) for row in df.to_numpy()]
+
+    execute_batch(cur, insert_query, data_tuples, page_size=1000)
 
     conn.commit()
     cur.close()
     conn.close()
 
-    print("Data berhasil masuk ke PostgreSQL")
-
+    print("Data berhasil masuk ke PostgreSQL menggunakan execute_batch")
+    
 if __name__ == "__main__":
     app_id = "id.dana"
 
